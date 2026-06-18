@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Tema 6 — Ley del Consell (Títulos III–V) | Opositar en Valencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --naranja: #d97706; --naranja-claro: #fef3c7; --naranja-borde: #f59e0b;
+    --azul-oscuro: #1e293b; --texto: #374151; --texto-suave: #6b7280;
+    --borde: #e5e7eb; --fondo: #fafaf9; --blanco: #ffffff;
+    --verde: #166534; --verde-bg: #f0fdf4; --verde-borde: #86efac;
+    --rojo: #991b1b; --rojo-bg: #fef2f2; --rojo-borde: #fca5a5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--fondo); color: var(--texto); min-height: 100vh; font-size: 16px; line-height: 1.6; }
+  header { background: var(--blanco); border-bottom: 1px solid var(--borde); }
+  .header-top { max-width: 860px; margin: 0 auto; padding: 1.4rem 1.5rem 1rem; display: flex; align-items: flex-start; gap: 1.2rem; }
+  .header-logo { width: 48px; height: 48px; border-radius: 8px; object-fit: contain; flex-shrink: 0; }
+  .header-textos { flex: 1; }
+  .header-site { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--naranja); font-weight: 600; margin-bottom: 3px; }
+  .header-titulo { font-family: 'Lora', serif; font-size: clamp(1.25rem, 3.5vw, 1.75rem); font-weight: 700; color: var(--azul-oscuro); line-height: 1.2; }
+  .header-sub { font-size: 0.88rem; color: var(--texto-suave); margin-top: 4px; }
+  .header-meta { background: var(--naranja-claro); border-top: 1px solid #fde68a; padding: 0.55rem 1.5rem; }
+  .header-meta-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; font-size: 0.83rem; color: #92400e; font-weight: 500; }
+  .barra-wrap { position: sticky; top: 0; z-index: 100; background: var(--blanco); border-bottom: 1px solid var(--borde); padding: 0.6rem 1.5rem; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+  .barra-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; }
+  .barra-track { flex: 1; height: 6px; background: #f3f4f6; border-radius: 99px; overflow: hidden; }
+  .barra-fill { height: 100%; background: var(--naranja); border-radius: 99px; transition: width 0.35s ease; width: 0%; }
+  .barra-num { font-size: 13px; font-weight: 600; color: var(--azul-oscuro); white-space: nowrap; min-width: 52px; }
+  .barra-score { font-size: 13px; color: var(--texto-suave); white-space: nowrap; }
+  .barra-score .ok { color: var(--verde); font-weight: 600; }
+  .barra-score .ko { color: var(--rojo); font-weight: 600; }
+  main { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+  .card { background: var(--blanco); border: 1px solid var(--borde); border-radius: 10px; padding: 1.5rem 1.6rem; margin-bottom: 1.4rem; transition: box-shadow 0.2s; }
+  .card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.06); }
+  .card-num { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--naranja); margin-bottom: 0.5rem; }
+  .card-pregunta { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; line-height: 1.55; color: var(--azul-oscuro); margin-bottom: 1.1rem; }
+  .opciones { display: flex; flex-direction: column; gap: 0.45rem; }
+  .opcion { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.7rem 1rem; border: 1.5px solid var(--borde); border-radius: 7px; cursor: pointer; background: var(--blanco); text-align: left; font-family: 'Source Sans 3', sans-serif; font-size: 0.93rem; color: var(--texto); line-height: 1.5; transition: border-color 0.15s, background 0.15s; width: 100%; }
+  .opcion:hover:not(:disabled) { border-color: var(--naranja-borde); background: var(--naranja-claro); }
+  .opcion .letra { font-weight: 700; color: var(--naranja); min-width: 18px; font-size: 0.85rem; margin-top: 2px; flex-shrink: 0; }
+  .opcion.correcta { border-color: var(--verde-borde); background: var(--verde-bg); color: var(--verde); }
+  .opcion.correcta .letra { color: #15803d; }
+  .opcion.incorrecta { border-color: var(--rojo-borde); background: var(--rojo-bg); color: var(--rojo); }
+  .opcion.incorrecta .letra { color: var(--rojo); }
+  .opcion:disabled { cursor: default; }
+  .explicacion { display: none; margin-top: 1rem; padding: 0.9rem 1rem 0.9rem 1.1rem; background: #fffbeb; border-left: 3px solid var(--naranja); border-radius: 0 6px 6px 0; font-size: 0.875rem; line-height: 1.65; color: var(--texto); }
+  .explicacion.visible { display: block; animation: fadeIn 0.22s ease; }
+  .explicacion strong { color: var(--azul-oscuro); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+  .resultado { display: none; background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 2.5rem 2rem 2rem; margin: 1.5rem 0 2rem; text-align: center; }
+  .resultado.visible { display: block; animation: fadeIn 0.3s ease; }
+  .resultado-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--naranja); font-weight: 600; margin-bottom: 0.5rem; }
+  .resultado h2 { font-family: 'Lora', serif; font-size: 1.75rem; font-weight: 700; color: var(--azul-oscuro); margin-bottom: 0.3rem; }
+  .resultado-nota { font-size: 3.2rem; font-weight: 700; color: var(--azul-oscuro); line-height: 1; margin: 1rem 0 0.3rem; font-family: 'Lora', serif; }
+  .resultado-nota span { color: var(--naranja); }
+  .calif-badge { display: inline-block; padding: 5px 16px; border-radius: 99px; font-size: 0.9rem; font-weight: 600; margin: 0.6rem 0 1.5rem; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0 0 1.5rem; }
+  .stat { background: var(--fondo); border: 1px solid var(--borde); border-radius: 8px; padding: 0.9rem 0.5rem; }
+  .stat-num { font-size: 1.9rem; font-weight: 700; font-family: 'Lora', serif; }
+  .stat-lab { font-size: 0.78rem; color: var(--texto-suave); margin-top: 2px; }
+  .resultado-hint { font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 1.2rem; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.7rem 1.6rem; border-radius: 7px; font-family: 'Source Sans 3', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.18s; }
+  .btn-naranja { background: var(--naranja); color: white; }
+  .btn-naranja:hover { background: #b45309; transform: translateY(-1px); }
+  @media (max-width: 580px) { main { padding: 1.2rem 1rem 4rem; } .card { padding: 1.1rem; } .stats { grid-template-columns: 1fr 1fr; } .header-top { padding: 1rem; gap: 0.8rem; } .header-meta { padding: 0.5rem 1rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <img class="header-logo"
+      src="https://opositorgva.wordpress.com/wp-content/uploads/2024/04/cropped-opositar-en-valencia-logo-sin-fondo.png"
+      alt="Opositar en Valencia" onerror="this.style.display='none'">
+    <div class="header-textos">
+      <div class="header-site">Opositar en Valencia · GVA</div>
+      <div class="header-titulo">Tema 6 — Ley 5/1983, del Consell (Títulos III, IV y V)</div>
+      <div class="header-sub">Relaciones Consell-Les Corts · Administración Pública · Responsabilidad</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="header-meta-inner">
+      <span id="totalPreguntas">📋 Cargando...</span>
+      <span>🎯 Nivel medio-alto</span>
+      <span>🔀 Orden aleatorio en cada intento</span>
+      <span>✅ Explicación en cada respuesta</span>
+    </div>
+  </div>
+</header>
+
+<div class="barra-wrap">
+  <div class="barra-inner">
+    <div class="barra-track"><div class="barra-fill" id="barraFill"></div></div>
+    <span class="barra-num" id="barraNum">0 / ?</span>
+    <span class="barra-score"><span class="ok" id="scoreOk">✓ 0</span> &nbsp;<span class="ko" id="scoreKo">✗ 0</span></span>
+  </div>
+</div>
+
+<main id="mainContent"></main>
+
+<script>
+const BANCO = [
+
+  /* ══ TÍTULO III — RELACIONES CONSELL / LES CORTS ══ */
+
+  /* Cap. I — Impulso y control */
+  {
+    p: "El artículo 44.1 de la Ley del Consell establece que el Consell realizará ante Les Corts una declaración de política general. ¿Cuándo tiene lugar exactamente?",
+    ops: [
+      "En el primer pleno del primer período ordinario de sesiones anual, en el mes de septiembre",
+      "En el pleno de apertura de cada legislatura, independientemente del mes",
+      "En el primer pleno del segundo período ordinario de sesiones anual, en el mes de enero",
+      "En el pleno ordinario que determine el Reglamento de Les Corts en cada inicio de año"
+    ],
+    c: 0,
+    exp: "<strong>Respuesta correcta: A.</strong> El art. 44.1 dispone que el Consell, a través del President, realizará la declaración de política general «en el primer pleno del primer período ordinario de sesiones anual en el mes de septiembre». La declaración va seguida de debate y puede concluir con aprobación de resoluciones."
+  },
+  {
+    p: "¿Cuándo NO tiene lugar el debate de política general del artículo 44.1 de la Ley del Consell?",
+    ops: [
+      "Los años en que el Consell presenta los presupuestos con retraso",
+      "Los años en que se celebre debate de investidura, bien por elecciones a Les Corts, bien por cualquier otra causa",
+      "Los años en que se haya aprobado una moción de censura en el semestre anterior",
+      "Los años en que el President haya planteado cuestión de confianza"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 44.1 in fine establece que «los años en que se celebre debate de investidura bien por la celebración de elecciones a Les Corts, bien por cualquier otra causa, no tendrá lugar el debate de política general». La ratio es evitar duplicidad de debates programáticos en el mismo ejercicio."
+  },
+  {
+    p: "¿En qué plazo máximo debe el Consell facilitar a Les Corts la información o documentación solicitada, según el artículo 45.2 de la Ley del Consell?",
+    ops: [
+      "En un plazo no superior a quince días",
+      "En un plazo no superior a veinte días",
+      "En un plazo no superior a treinta días o manifestar las razones fundadas en derecho que lo impidan",
+      "En un plazo no superior a cuarenta y cinco días"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 45.2 establece que el Consell «deberá facilitar la información o documentación solicitada en un plazo no superior a treinta días o manifestar las razones fundadas en derecho que lo impidan». No puede negarse sin más; si no facilita la información, debe justificar jurídicamente la negativa."
+  },
+  {
+    p: "¿A través de qué cauce se canaliza la relación ordinaria entre el Consell y Les Corts, según el artículo 45.4 de la Ley del Consell?",
+    ops: [
+      "A través de la Secretaría del Consell y de la Secretaría General de Les Corts",
+      "A través de la Presidencia de la Generalitat y del representante del Consell en la Junta de Portavoces",
+      "A través del Conseller de la Presidencia y del Presidente de Les Corts directamente",
+      "A través de los Grupos Parlamentarios y de los Consellers competentes por razón de materia"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 45.4 establece que «la relación ordinaria entre el Consell y Les Corts se canalizará a través de la Presidencia de la Generalitat y del representante del Consell en la Junta de Portavoces». Este doble canal —institucional y político— garantiza la fluidez de la comunicación ejecutivo-legislativo."
+  },
+  {
+    p: "El artículo 46 de la Ley del Consell regula la responsabilidad política del Consell. ¿Cómo es dicha responsabilidad y cómo se exige?",
+    ops: [
+      "Es responsabilidad individual de cada miembro; se exige mediante interpelaciones y comparecencias",
+      "Es responsabilidad solidaria de su gestión política ante Les Corts; se exige mediante moción de censura y cuestión de confianza",
+      "Es responsabilidad solidaria y también individual; se exige únicamente mediante moción de censura",
+      "Es responsabilidad colectiva ante Les Corts y ante el Rey; se exige mediante moción de censura"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 46 dispone que «el Consell responde solidariamente de su gestión política ante Les Corts, sin perjuicio de la responsabilidad directa de sus miembros por su gestión. La responsabilidad del Consell es exigible por medio de la moción de censura y de la cuestión de confianza». Hay responsabilidad solidaria del conjunto e individual de cada miembro."
+  },
+
+  /* Cap. II — Moción de censura */
+  {
+    p: "¿Qué fracción mínima de Diputados debe proponer la moción de censura según el artículo 48 de la Ley del Consell?",
+    ops: [
+      "Al menos la décima parte de los Diputados",
+      "Al menos la quinta parte de los Diputados",
+      "Al menos la tercera parte de los Diputados",
+      "Al menos la cuarta parte de los Diputados"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 48 exige que la moción de censura «sea propuesta, al menos, por la quinta parte de los Diputados en escrito motivado». Contrástese con el modelo estatal (art. 113.1 CE), que exige la décima parte de los Diputados del Congreso. El umbral valenciano es más exigente."
+  },
+  {
+    p: "¿Qué requisito imprescindible debe incluir la moción de censura en el ámbito autonómico valenciano, según el artículo 48 de la Ley del Consell?",
+    ops: [
+      "Un programa de gobierno alternativo por escrito de al menos 20 páginas",
+      "La firma de apoyo de todos los grupos parlamentarios de la oposición",
+      "Un candidato a la Presidencia de la Generalitat que haya aceptado la candidatura",
+      "La exposición de los motivos del cese exigido con al menos cinco fundamentos jurídicos"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 48 exige que la moción «habrá de incluir un candidato a la Presidencia de la Generalitat que haya aceptado la candidatura». Es la moción de censura constructiva: no basta derribar al President, hay que proponer un sustituto concreto que haya aceptado expresamente."
+  },
+  {
+    p: "¿En qué plazo pueden presentarse mociones de censura alternativas a la inicial, según el artículo 49.1 de la Ley del Consell?",
+    ops: [
+      "Dentro de los tres días siguientes a la presentación de la moción inicial",
+      "Dentro de los dos días siguientes a la presentación de la moción inicial",
+      "Dentro de las cuarenta y ocho horas siguientes a la admisión a trámite",
+      "En cualquier momento antes de que comience el debate en el pleno"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 49.1 establece que «dentro de los dos días siguientes a la presentación de la moción de censura podrán presentarse mociones alternativas». Estas mociones alternativas deben reunir los mismos requisitos que la inicial (escrito motivado, candidato aceptante, quinta parte de Diputados)."
+  },
+  {
+    p: "¿Cuál es el plazo mínimo que debe transcurrir desde la presentación de la moción de censura hasta su votación, según el artículo 49.2 de la Ley del Consell?",
+    ops: [
+      "Al menos tres días desde su presentación",
+      "Al menos cuatro días desde su presentación",
+      "Al menos cinco días desde su presentación",
+      "Al menos siete días desde su presentación"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 49.2 establece que «la moción de censura no podrá ser votada hasta que transcurran como mínimo cinco días desde su presentación». Este plazo de reflexión coincide con el previsto en el art. 113.3 CE para la moción de censura estatal."
+  },
+  {
+    p: "¿Qué mayoría se requiere para aprobar la moción de censura en la Comunitat Valenciana, según el artículo 49.4 de la Ley del Consell?",
+    ops: [
+      "Mayoría simple de los Diputados presentes en la sesión",
+      "Mayoría de tres quintos de los miembros de Les Corts",
+      "Mayoría absoluta de los miembros de Les Corts",
+      "Mayoría de dos tercios de los miembros de Les Corts"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 49.4 exige «el voto favorable de la mayoría absoluta de los miembros de Les Corts» para aprobar la moción de censura. Esta mayoría cualificada, igual a la del modelo estatal, garantiza la estabilidad del ejecutivo y dificulta las mociones meramente destructivas."
+  },
+  {
+    p: "Si se aprueba la moción de censura (art. 50.1 de la Ley del Consell), ¿a quién comunica el Presidente de Les Corts el hecho de la investidura del candidato incluido?",
+    ops: [
+      "Al Gobierno del Estado para su conocimiento y al DOCV para su publicación",
+      "Al Rey, a los efectos de su nombramiento",
+      "Al Consell Jurídico Consultivo para su dictamen",
+      "Al Tribunal Superior de Justicia de la Comunitat Valenciana"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 50.1 establece que, aprobada la moción, el candidato incluido «se entenderá investido de la confianza de la Cámara, hecho que el Presidente de Les Corts debe comunicar al Rey a los efectos de su nombramiento». La aprobación de la moción vale como investidura: no hay nueva votación de confianza."
+  },
+  {
+    p: "Si la moción de censura no es aprobada por Les Corts (art. 50.2 de la Ley del Consell), ¿qué restricción se impone a sus signatarios?",
+    ops: [
+      "No podrán presentar otra moción durante el resto de la legislatura",
+      "No podrán presentar otra moción durante el mismo período de sesiones",
+      "No podrán presentar otra moción durante los seis meses siguientes",
+      "No podrán participar en ningún debate de política general durante el año en curso"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 50.2 dispone que si la moción «no fuese aprobada por Les Corts, sus signatarios no podrán presentar otra durante el mismo período de sesiones». Esta limitación evita el uso repetitivo y abusivo de la moción como instrumento de desgaste político."
+  },
+
+  /* Cap. III — Cuestión de confianza */
+  {
+    p: "Según el artículo 51.1 de la Ley del Consell, ¿sobre qué materias puede plantearse la cuestión de confianza?",
+    ops: [
+      "Exclusivamente sobre el programa de gobierno del President",
+      "Sobre su programa, una decisión política o un proyecto de Ley, previa deliberación del Consell",
+      "Sobre cualquier asunto de interés general, sin restricción de materias",
+      "Solo sobre proyectos de ley de especial trascendencia aprobados por el Consell"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 51.1 permite al President plantear la cuestión de confianza «sobre su programa, una decisión política o un proyecto de Ley», siempre con previa deliberación del Consell. El modelo valenciano es más amplio que el estatal (art. 112 CE), que solo admite programa o declaración de política general."
+  },
+  {
+    p: "¿Cómo se presenta la cuestión de confianza ante Les Corts, según el artículo 51.2 de la Ley del Consell?",
+    ops: [
+      "Mediante discurso del President ante el Pleno, sin documentación escrita",
+      "En escrito motivado ante la Mesa de Les Corts, acompañado del certificado del Consell",
+      "Mediante decreto del Consell publicado en el DOCV antes de su presentación",
+      "En escrito del Secretario del Consell dirigido al Presidente de Les Corts"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 51.2 dispone que «la cuestión de confianza se presentará, en escrito motivado, ante la Mesa de Les Corts acompañada del correspondiente certificado del Consell». El certificado del Consell acredita que se ha producido la previa deliberación colegial exigida por el art. 51.1."
+  },
+  {
+    p: "¿Cuál es el plazo mínimo que debe transcurrir entre la presentación de la cuestión de confianza y su votación, según el artículo 51.3 de la Ley del Consell?",
+    ops: [
+      "Al menos cuarenta y ocho horas desde su presentación",
+      "Al menos veinticuatro horas desde su presentación",
+      "Al menos setenta y dos horas desde su presentación",
+      "Al menos cinco días desde su presentación"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 51.3 establece que la cuestión de confianza «será sometida a votación transcurridas al menos veinticuatro horas desde su presentación». Este plazo es más breve que el de la moción de censura (cinco días), lo que permite mayor agilidad cuando es el propio ejecutivo quien busca revalidar su apoyo."
+  },
+  {
+    p: "¿Qué mayoría necesita la cuestión de confianza para entenderse otorgada, según el artículo 51.3 de la Ley del Consell?",
+    ops: [
+      "Mayoría absoluta de los miembros de Les Corts",
+      "Mayoría de tres quintos de los Diputados presentes",
+      "Mayoría simple de los Diputados",
+      "Mayoría de dos tercios de les Corts en primera votación y simple en segunda"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 51.3 establece que «la confianza se entenderá otorgada cuando obtenga el voto de la mayoría simple de los diputados». Es la mayoría más baja (simple), lo que facilita que el ejecutivo supere la cuestión de confianza si cuenta con apoyo parlamentario mínimo."
+  },
+  {
+    p: "El artículo 51.3 de la Ley del Consell establece una regla especial cuando la cuestión de confianza versa sobre un proyecto de ley. ¿Cuál es?",
+    ops: [
+      "El proyecto de ley se tramita por el procedimiento de urgencia en Les Corts",
+      "El proyecto de ley se entiende aprobado según el texto enviado por el Consell, salvo que se requiera mayoría cualificada para su aprobación",
+      "El proyecto de ley debe ser votado artículo por artículo antes de la votación de confianza",
+      "El proyecto de ley requiere mayoría absoluta para su aprobación aunque ordinariamente bastara la simple"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 51.3 in fine dispone que «si la cuestión versare sobre un proyecto de ley, éste se entenderá aprobado según el texto enviado por el Consell, excepto en los casos en los que, para su aprobación, se requiera mayoría cualificada». Es decir, el voto de confianza aprueba el texto gubernamental sin enmiendas, salvo materias que requieran mayoría reforzada."
+  },
+  {
+    p: "Si Les Corts niegan su confianza al President (art. 52 de la Ley del Consell), ¿qué procedimiento sigue?",
+    ops: [
+      "El President convoca inmediatamente nuevas elecciones autonómicas",
+      "Se procede a la elección del nuevo President de acuerdo con el artículo 2 de la Ley del Consell",
+      "El Consell continúa en funciones hasta que Les Corts designen un candidato por mayoría absoluta",
+      "El President puede disolver Les Corts antes de dimitir si así lo acuerda el Consell"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 52 establece que si Les Corts niegan la confianza «se procederá a la elección del nuevo President de la Generalitat de acuerdo con lo establecido en el artículo 2 de la presente Ley». Se inicia el proceso ordinario de investidura: no hay elecciones automáticas ni disolución inmediata."
+  },
+
+  /* Cap. IV — Legislación delegada y urgencia */
+  {
+    p: "El artículo 53 de la Ley del Consell establece que Les Corts pueden delegar en el Consell la potestad de dictar Decretos Legislativos. ¿Cuál de las siguientes materias SÍ puede ser objeto de delegación?",
+    ops: [
+      "Las que afecten al desarrollo de los derechos fundamentales y libertades públicas",
+      "Las que afecten al ordenamiento institucional básico de la Comunitat Valenciana",
+      "Las que afecten a la planificación económica y presupuestaria de la Generalitat",
+      "Las que afecten al régimen electoral de la Comunitat Valenciana"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 53 prohíbe la delegación en cuatro materias: derechos fundamentales y libertades públicas, ordenamiento institucional básico, régimen electoral y materias que requieran mayoría cualificada. La planificación económica y presupuestaria no está excluida expresamente, por lo que puede ser objeto de delegación."
+  },
+  {
+    p: "¿Qué prohíbe expresamente el artículo 53 de la Ley del Consell respecto a la legislación delegada?",
+    ops: [
+      "La subdelegación legislativa en ningún caso",
+      "La delegación por plazo superior a un año",
+      "La delegación sobre materias que hayan sido objeto de decreto-ley en los tres años anteriores",
+      "La delegación en favor de las Comisiones Delegadas del Consell"
+    ],
+    c: 0,
+    exp: "<strong>Respuesta correcta: A.</strong> El art. 53 in fine establece que «en ningún caso procederá la subdelegación legislativa». El Consell recibe la potestad delegada de Les Corts pero no puede volver a delegarla en ningún otro órgano inferior."
+  },
+  {
+    p: "El artículo 54 de la Ley del Consell regula las condiciones formales de la delegación legislativa. ¿Cuáles son?",
+    ops: [
+      "Debe conferirse de forma expresa o implícita, para materia concreta, con o sin plazo",
+      "Debe conferirse de forma expresa para materia concreta y con fijación de plazo para su ejercicio; se agota al publicarse el Decreto Legislativo",
+      "Puede conferirse de modo genérico para varias materias conexas y por tiempo indeterminado",
+      "Debe conferirse mediante Ley Orgánica aprobada por mayoría absoluta de Les Corts"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 54 establece tres reglas: (1) la delegación debe conferirse «de forma expresa para materia concreta y con fijación de plazo»; (2) «se agota al hacer uso de ella el Consell mediante la publicación del correspondiente Decreto legislativo»; (3) «no podrá entenderse concedida de modo implícito o por tiempo indeterminado»."
+  },
+  {
+    p: "Según el artículo 55.1 de la Ley del Consell, ¿cuándo debe otorgarse la delegación legislativa mediante Ley de Bases?",
+    ops: [
+      "Cuando se trate de refundir varios textos legales en uno solo",
+      "Cuando el objeto de la delegación sea la formación de textos articulados",
+      "Cuando la delegación afecte a materias de competencia exclusiva de la Generalitat",
+      "Cuando el plazo de ejercicio sea superior a seis meses"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 55.1 establece que la delegación legislativa «deberá otorgarse mediante una Ley de bases cuando su objeto sea la formación de textos articulados». Las Leyes de bases deben delimitar con precisión el objeto, alcance y principios de la delegación, y no pueden autorizar modificación de la propia Ley de bases ni normas retroactivas."
+  },
+  {
+    p: "¿Cuándo debe otorgarse la delegación legislativa por Ley ordinaria, según el artículo 55.2 de la Ley del Consell?",
+    ops: [
+      "Cuando la delegación sea para desarrollar reglamentariamente una ley preexistente",
+      "Cuando se trate de refundir varios textos legales en uno solo",
+      "Cuando la materia afecte a tributos propios de la Comunitat Valenciana",
+      "Cuando el plazo de ejercicio no supere los tres meses"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 55.2 dispone que «la delegación legislativa deberá otorgarse por una Ley ordinaria cuando se trate de refundir varios textos legales en uno sólo». Dicha Ley ordinaria deberá determinar el ámbito normativo y si la facultad se limita a formular un texto único o alcanza a regularizar, aclarar y armonizar los textos refundidos."
+  },
+  {
+    p: "El artículo 56 de la Ley del Consell establece una obligación del Consell tras ejercer la delegación legislativa. ¿En qué consiste?",
+    ops: [
+      "Publicar el Decreto Legislativo simultáneamente en el BOE y en el DOCV",
+      "Dirigir a Les Corts la correspondiente comunicación con el texto articulado o refundido objeto de la delegación",
+      "Solicitar al Consell Jurídico Consultivo dictamen sobre el Decreto Legislativo aprobado",
+      "Convocar una sesión informativa ante la Comisión parlamentaria competente"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 56 dispone que «el Consell, tan pronto como hubiere hecho uso de la delegación legislativa, dirigirá a Les Corts la correspondiente comunicación, que contendrá el texto articulado o refundido objeto de aquélla». Esta comunicación permite el control parlamentario posterior de la norma aprobada."
+  },
+  {
+    p: "El artículo 57 de la Ley del Consell faculta al Consell para oponerse a la tramitación de proposiciones de ley o enmiendas. ¿En qué supuesto?",
+    ops: [
+      "Cuando afecten negativamente al equilibrio presupuestario de la Generalitat",
+      "Cuando fueren contrarias a una delegación legislativa en vigor",
+      "Cuando vulneren competencias exclusivas de la Generalitat",
+      "Cuando el Consell Jurídico Consultivo emita dictamen desfavorable"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 57 establece que «cuando una proposición de Ley o una enmienda fueren contrarias a una delegación legislativa en vigor, el Consell está facultado para oponerse a su tramitación». No obstante, siempre puede presentarse una proposición de ley para derogar total o parcialmente la Ley de delegación."
+  },
+  {
+    p: "Los decretos-leyes autonómicos (art. 58.1 de la Ley del Consell) pueden dictarse ante una situación de extraordinaria y urgente necesidad. ¿Cuál de las siguientes materias SÍ puede regularse mediante decreto-ley?",
+    ops: [
+      "El ordenamiento de las instituciones básicas de la Generalitat",
+      "Los derechos, deberes y libertades de los ciudadanos establecidos en la CE y el Estatut",
+      "El régimen electoral de la Comunitat Valenciana",
+      "La regulación de subvenciones en materia de política industrial autonómica"
+    ],
+    c: 3,
+    exp: "<strong>Respuesta correcta: D.</strong> El art. 58.1 prohíbe que los decretos-leyes afecten al ordenamiento de las instituciones básicas, a los derechos, deberes y libertades constitucionales y estatutarios, y al régimen electoral. Las subvenciones en política industrial no están excluidas, por lo que pueden regularse mediante decreto-ley si concurre la urgente necesidad."
+  },
+  {
+    p: "¿En qué plazo deben ser sometidos a Les Corts los decretos-leyes para su convalidación o derogación, según el artículo 58.2 de la Ley del Consell?",
+    ops: [
+      "Dentro de los quince días siguientes a su promulgación",
+      "Dentro de los veinte días siguientes a su promulgación",
+      "Dentro de los treinta días siguientes a su promulgación",
+      "Dentro de los cuarenta y cinco días siguientes a su promulgación"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 58.2 establece que los decretos-leyes «deberán ser inmediatamente sometidos al debate y votación de totalidad en Les Corts sobre su convalidación o derogación, dentro del plazo de los treinta días siguientes a su promulgación». Este plazo coincide con el previsto en el art. 86.2 CE para los decretos-leyes estatales."
+  },
+  {
+    p: "El artículo 58.3 de la Ley del Consell establece una posibilidad adicional que tienen Les Corts respecto a los decretos-leyes. ¿Cuál es?",
+    ops: [
+      "Enmendar el decreto-ley antes de su convalidación por mayoría absoluta",
+      "Acordar la tramitación de los decretos-leyes como proyectos de ley por el procedimiento de urgencia",
+      "Solicitar dictamen del Consell Jurídico Consultivo sobre la concurrencia de la urgente necesidad",
+      "Suspender provisionalmente el decreto-ley hasta que se resuelva su constitucionalidad"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 58.3 permite que, dentro del plazo de treinta días, «Les Corts podrán acordar la tramitación de los decretos-leyes como proyectos de ley por el procedimiento de urgencia». Esta opción permite a la Cámara introducir modificaciones al texto del decreto-ley, cosa que no es posible en la simple convalidación."
+  },
+
+  /* Cap. V — Expiración del mandato */
+  {
+    p: "El artículo 59 de la Ley del Consell establece que el número de diputados a elegir en la convocatoria de elecciones debe ser de 99 o superior. ¿Quién especifica en el decreto de convocatoria el número de diputados por circunscripción?",
+    ops: [
+      "La Junta Electoral Central, siguiendo criterios proporcionales de población",
+      "El President de la Generalitat en el propio decreto de convocatoria",
+      "Les Corts, mediante acuerdo previo del Pleno por mayoría absoluta",
+      "El Consell Jurídico Consultivo, mediante dictamen vinculante previo"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 59 establece que «en el decreto de convocatoria se especificará el número de diputados a elegir en cada circunscripción». Es el President quien firma el decreto de convocatoria de elecciones, fijando esos extremos «de acuerdo con la Ley Electoral Valenciana»."
+  },
+
+  /* ══ TÍTULO IV — ADMINISTRACIÓN PÚBLICA DE LA GENERALITAT ══ */
+
+  /* Cap. I — Principios generales */
+  {
+    p: "El artículo 60 de la Ley del Consell establece los principios organizativos de la Administración Pública de la Generalitat. ¿Cuáles son?",
+    ops: [
+      "Eficacia, jerarquía, descentralización, desconcentración, coordinación y legalidad",
+      "Eficacia, publicidad, jerarquía, descentralización, desconcentración y coordinación, con sometimiento pleno a la ley y al derecho, dentro de la mayor economía de medios",
+      "Legalidad, eficacia, coordinación, imparcialidad y transparencia",
+      "Jerarquía, competencia, objetividad, eficiencia y publicidad"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 60 dispone que la Administración «se organiza y actúa con personalidad jurídica única, conforme a criterios de eficacia, publicidad, jerarquía, descentralización, desconcentración y coordinación, con sometimiento pleno a la ley y al derecho, dentro de la mayor economía de medios». La «personalidad jurídica única» y la «economía de medios» son rasgos específicos de este artículo."
+  },
+  {
+    p: "El artículo 62 de la Ley del Consell exige una condición previa para crear órganos administrativos que supongan incremento del gasto. ¿Cuál es?",
+    ops: [
+      "Autorización previa de Les Corts mediante ley de crédito extraordinario",
+      "Estudio económico del coste de funcionamiento, rendimiento de sus servicios y posibilidad de aprovechamiento de medios de otras Administraciones",
+      "Dictamen favorable del Consell Jurídico Consultivo sobre la necesidad del nuevo órgano",
+      "Informe del Interventor General de la Generalitat sobre el impacto presupuestario"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 62 establece que la creación de todo órgano administrativo que suponga un incremento del gasto «irá precedido por un estudio económico del coste de su funcionamiento y del rendimiento o utilidad de sus servicios, así como de la posibilidad de aprovechamiento de los medios de otras Administraciones, en evitación de un incremento injustificado del gasto público»."
+  },
+  {
+    p: "El artículo 63.1 de la Ley del Consell regula la delegación de competencias. ¿A qué órgano puede delegarse ordinariamente?",
+    ops: [
+      "En cualquier órgano inferior de la misma Consellería",
+      "En el órgano jerárquico inmediato inferior, salvo que por eficacia sea aconsejable atribuirlo a otro",
+      "En el órgano que el Consell determine mediante decreto",
+      "Solo en el Subsecretario o Director General competente por razón de materia"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 63.1 dispone que «el ejercicio de las competencias propias de cada órgano podrá ser delegado por éste en el órgano jerárquico inmediato inferior, salvo que por la aplicación del principio de eficacia sea aconsejable atribuirlo a otro órgano». Además, prohíbe expresamente la delegación de competencias ya delegadas."
+  },
+  {
+    p: "¿Qué competencias NO son delegables según el artículo 63.3 de la Ley del Consell?",
+    ops: [
+      "Las competencias en materia de contratación y gestión de personal de nivel básico",
+      "Las que procedan de atribución expresa del Estatuto, las de los Consellers como miembros del Consell, y las relativas a relaciones con órganos del Estado, otras CC.AA. o Les Corts",
+      "Las competencias sancionadoras de cuantía superior a los límites fijados por ley",
+      "Las competencias en materia tributaria y presupuestaria de la Generalitat"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 63.3 establece tres tipos de competencias indelegables: a) las que procedan de atribución expresa del Estatuto de Autonomía; b) las que correspondan a los Consellers en su condición de miembros del Consell; c) las que correspondan a relaciones con órganos del Estado, de otras Comunidades Autónomas o Les Corts."
+  },
+  {
+    p: "Según el artículo 63.5 de la Ley del Consell, ¿pueden revocarse las delegaciones de competencias?",
+    ops: [
+      "No, una vez realizadas tienen carácter permanente hasta nueva ley",
+      "Solo pueden revocarse con autorización del Consell en pleno",
+      "Sí, pueden ser revocadas en cualquier momento por el órgano delegante",
+      "Solo pueden revocarse transcurrido al menos un año desde la delegación"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 63.5 es claro: «las delegaciones podrán ser revocadas en cualquier momento por el órgano delegante». Esta posibilidad de revocación libre garantiza que el órgano superior no pierde el control sobre la materia delegada."
+  },
+  {
+    p: "¿Dónde deben publicarse las delegaciones de competencias y sus renovaciones, según el artículo 63.6 de la Ley del Consell?",
+    ops: [
+      "En el Boletín Oficial del Estado y en el DOCV",
+      "En el Diari Oficial de la Comunitat Valenciana",
+      "En el tablón de anuncios de la Consellería delegante",
+      "En el DOCV y en la sede electrónica de la Consellería competente"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 63.6 establece que «las delegaciones y sus renovaciones deberán ser publicadas en el Diari Oficial de la Comunitat Valenciana, y en las resoluciones adoptadas por la delegación deberá hacerse constar este extremo». La doble exigencia —publicación en el DOCV y mención en las resoluciones delegadas— garantiza la seguridad jurídica."
+  },
+
+  /* Cap. II — Organización, competencias y estructura */
+  {
+    p: "El artículo 66 de la Ley del Consell estructura la organización de las Consellerías en tres niveles. ¿Cuáles son?",
+    ops: [
+      "Nivel político, nivel directivo y nivel técnico",
+      "Órganos superiores, nivel directivo y nivel administrativo",
+      "Nivel central, nivel periférico y nivel local",
+      "Órganos colegiados, órganos unipersonales y órganos consultivos"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 66 establece que «la organización de las Consellerías se estructura en tres niveles: Órganos superiores, nivel directivo y nivel administrativo». Esta tripartición es fundamental para entender la jerarquía interna de cada Departamento de la Administración autonómica valenciana."
+  },
+  {
+    p: "¿Qué órganos integran los «órganos superiores» y el «nivel directivo» de las Consellerías, según el artículo 67 de la Ley del Consell?",
+    ops: [
+      "Superiores: Conseller y Viceconseller. Directivos: Subsecretario y Directores generales",
+      "Superiores: Conseller y Secretarios autonómicos. Directivos: Subsecretarios, Directores generales y demás altos cargos con rango de Director general",
+      "Superiores: Conseller, Viceconseller y Secretarios autonómicos. Directivos: Directores generales",
+      "Superiores: Conseller y Subsecretario. Directivos: Secretarios autonómicos y Directores generales"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 67 establece: «los órganos superiores del Departamento son el Conseller y los Secretarios autonómicos». «El nivel directivo lo integran los Subsecretarios, Directores generales y demás altos cargos que ostenten el rango de Director general»."
+  },
+  {
+    p: "El artículo 68.2 de la Ley del Consell describe la función de los Secretarios autonómicos. ¿Ante quién responden de su gestión?",
+    ops: [
+      "Ante el Consell en pleno, mensualmente mediante informe escrito",
+      "Ante el titular del que dependan",
+      "Ante el Subsecretario de la Consellería correspondiente",
+      "Ante Les Corts, a través de la Comisión parlamentaria competente"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 68.2 establece que los Secretarios autonómicos «dirigen y coordinan los Centros Directivos que se adscriben bajo su dependencia y responden, ante el titular del que dependan, de la gestión de aquellas materias que les sean atribuidas». El «titular» es el Conseller, Vicepresidente o President, según el caso."
+  },
+  {
+    p: "Una de las funciones ejecutivas de los Secretarios autonómicos (art. 68.3.c) de la Ley del Consell) es resolver recursos. ¿Cuáles exactamente?",
+    ops: [
+      "Los recursos de alzada contra resoluciones del Conseller",
+      "Los recursos contra resoluciones de los Centros Directivos bajo su dependencia cuyos actos no agoten la vía administrativa",
+      "Los recursos de reposición contra sus propias resoluciones",
+      "Los recursos contencioso-administrativos interpuestos por ciudadanos afectados"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 68.3.c) atribuye a los Secretarios autonómicos la función de «resolver los recursos que se interpongan contra las Resoluciones de los Centros Directivos que estén bajo su dependencia y cuyos actos no agoten la vía administrativa». Este precepto encaja con la cadena de recursos en vía administrativa."
+  },
+  {
+    p: "El artículo 69.1 de la Ley del Consell regula la Subsecretaría. ¿Bajo qué dependencia se crea y qué función general tiene?",
+    ops: [
+      "Bajo la dependencia del Secretario autonómico más senior; lleva la gestión económica de la Consellería",
+      "Bajo la directa dependencia del President y de cada Conseller; lleva a cabo la inspección de todos los servicios de su ámbito y ostenta la jefatura de todo el personal",
+      "Bajo la dependencia del Director general de Servicios; coordina los servicios periféricos",
+      "Bajo la dependencia del Consell; coordina las relaciones de la Consellería con Les Corts"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 69.1 establece que «bajo la directa dependencia del President y de cada Conseller, se creará la Subsecretaría, que llevará a cabo la inspección de todos los servicios de su ámbito, ostentando la jefatura de todo el personal de la misma». La Subsecretaría es el órgano central de servicios comunes de cada Consellería."
+  },
+  {
+    p: "Según el artículo 70.6 de la Ley del Consell, ¿qué obligación periódica tienen los Directores generales respecto a sus órganos superiores?",
+    ops: [
+      "Presentar mensualmente un informe de ejecución presupuestaria",
+      "Elevar anualmente un informe acerca del funcionamiento, coste y rendimiento de los servicios a su cargo, proponiendo las modificaciones que les asignen las leyes, reglamentos u órganos superiores",
+      "Celebrar trimestralmente una reunión informativa con el Subsecretario",
+      "Remitir semanalmente a la Subsecretaría los expedientes resueltos para su supervisión"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 70.6 establece que los Directores generales deben «elevar anualmente a sus órganos superiores un informe acerca del funcionamiento, coste y rendimiento de los servicios a su cargo, proponiendo las modificaciones que le asignen las Leyes, Reglamentos u órganos superiores». Esta rendición de cuentas anual es una garantía de eficiencia administrativa."
+  },
+  {
+    p: "¿Cómo se organiza el nivel administrativo según el artículo 72 de la Ley del Consell?",
+    ops: [
+      "En delegaciones territoriales, oficinas comarcales y puntos de atención ciudadana",
+      "En subdirecciones generales, servicios, secciones, unidades y negociados, pudiendo establecerse otras unidades",
+      "En áreas funcionales, unidades de gestión y equipos técnicos",
+      "En centros directivos, oficinas de gestión y unidades de apoyo administrativo"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 72 establece que «el nivel administrativo se organizará en subdirecciones generales, servicios, secciones, unidades y negociados, pudiendo establecerse otras unidades cuando así fuese necesario». Esta enumeración establece una escala descendente de unidades organizativas dentro del nivel administrativo."
+  },
+  {
+    p: "El artículo 73 de la Ley del Consell crea la Secretaría General Administrativa. ¿Cuántas puede haber en cada Consellería y de qué órgano depende?",
+    ops: [
+      "Puede haber más de una según las necesidades; depende del Secretario autonómico",
+      "Solo una, y depende de la Subsecretaría",
+      "Una por cada Secretaría Autonómica existente en la Consellería; depende de cada Secretario autonómico",
+      "Solo una, y depende directamente del Conseller"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 73.1 establece que «en todas las Consellerías, y en la Presidencia, en su caso, como máximo órgano de nivel administrativo de cada una de ellas, existirá una única Secretaría General Administrativa, dependiente de la Subsecretaría». Una sola por Consellería y dependiente de la Subsecretaría."
+  },
+
+  /* Cap. III — Organización territorial */
+  {
+    p: "El artículo 74 de la Ley del Consell estructura territorialmente las Consellerías. ¿Cuáles son esas dos estructuras?",
+    ops: [
+      "Oficinas centrales y oficinas comarcales",
+      "Servicios centrales y servicios periféricos",
+      "Delegaciones territoriales y servicios integrados",
+      "Órganos centrales y órganos desconcentrados"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 74 establece que «territorialmente, la organización de las Consellerías se estructura en servicios centrales y en servicios periféricos». Añade que «los servicios periféricos serán la expresión organizativa del principio de desconcentración que ha de regir en la actividad de la Administración de la Generalitat»."
+  },
+  {
+    p: "¿Cuál es el ámbito de competencia de los servicios centrales, según el artículo 75 de la Ley del Consell?",
+    ops: [
+      "Solo la ciudad de Valencia y su área metropolitana",
+      "Las tres provincias de la Comunitat Valenciana por igual",
+      "Todo el territorio de la Comunitat Valenciana",
+      "El territorio que les asigne el Reglamento orgánico de cada Consellería"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 75 es breve y categórico: «los servicios centrales tienen competencia sobre todo el territorio de la Comunitat Valenciana». En cambio, los servicios periféricos (art. 76) solo tienen competencia en su propio ámbito territorial."
+  },
+
+  /* ══ TÍTULO V — RESPONSABILIDAD ══ */
+  {
+    p: "El artículo 77 de la Ley del Consell establece ante qué órgano se exige la responsabilidad penal y civil del President y de los miembros del Consell. ¿Cuál es?",
+    ops: [
+      "Ante el Juzgado de lo Penal de Valencia, como fuero ordinario",
+      "Ante el Tribunal Constitucional, en su función de control de los actos del ejecutivo autonómico",
+      "Ante el Tribunal Superior de Justicia de la Comunitat Valenciana o, en su caso, ante el Tribunal Supremo",
+      "Ante la Sala de lo Civil y Penal de la Audiencia Provincial de Valencia"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 77 establece que «la responsabilidad penal y civil del President de la Generalitat y de los miembros del Consell se exigirá ante el Tribunal Superior de Justícia de la Comunitat Valenciana o, en su caso, ante el Tribunal Supremo». El aforamiento ante el TSJ es la regla general; la remisión al Tribunal Supremo opera en casos específicos."
+  },
+  {
+    p: "El artículo 78 de la Ley del Consell regula la responsabilidad penal y civil de autoridades y funcionarios de la Generalitat (distintos de los miembros del Consell). ¿Cuál es la especialidad que establece respecto al órgano competente?",
+    ops: [
+      "Las referencias al Tribunal Supremo se entenderán hechas al Tribunal Superior de Justicia Valenciano",
+      "Las referencias a los Juzgados de Primera Instancia se entenderán hechas a los Juzgados de lo Contencioso-Administrativo",
+      "Las referencias al Tribunal Constitucional se entenderán hechas al TSJ de la Comunitat Valenciana",
+      "Las referencias a la Audiencia Nacional se entenderán hechas al TSJ de la Comunitat Valenciana"
+    ],
+    c: 0,
+    exp: "<strong>Respuesta correcta: A.</strong> El art. 78 establece que las responsabilidades penales y civiles de las autoridades y funcionarios de la Generalitat se exigen conforme a las disposiciones generales del Estado, «con la salvedad de que las referencias al Tribunal Supremo se entenderán hechas al Tribunal Superior de Justicia Valenciano». Esta es la especialidad autonómica respecto al régimen general estatal."
+  },
+  {
+    p: "El artículo 79 de la Ley del Consell regula la responsabilidad patrimonial de la Administración. ¿Qué excepción establece?",
+    ops: [
+      "Los daños derivados de actos legislativos con rango de ley no son indemnizables",
+      "Los daños producidos por el funcionamiento normal de los servicios no son indemnizables, solo los del funcionamiento anormal",
+      "Los casos de fuerza mayor quedan excluidos de la obligación de indemnizar",
+      "Los daños de cuantía inferior al umbral mínimo fijado reglamentariamente no son indemnizables"
+    ],
+    c: 2,
+    exp: "<strong>Respuesta correcta: C.</strong> El art. 79 establece que la responsabilidad patrimonial de la Administración de la Generalitat es exigible por toda lesión causada por el funcionamiento de los servicios públicos «salvo casos de fuerza mayor». Esta excepción constitucional y legal (también prevista en el art. 106.2 CE) es la única que rompe la regla general de responsabilidad objetiva."
+  },
+
+  /* ══ PREGUNTAS DE SÍNTESIS Y DISTINCIÓN ══ */
+  {
+    p: "¿Qué diferencia existe entre el plazo para presentar mociones de censura alternativas (art. 49.1) y el plazo mínimo para votar la moción de censura (art. 49.2) en la Ley del Consell?",
+    ops: [
+      "Las alternativas pueden presentarse en los tres primeros días; la votación no puede celebrarse antes de los siete días",
+      "Las alternativas pueden presentarse en los dos primeros días; la votación no puede celebrarse antes de los cinco días",
+      "Las alternativas pueden presentarse en las primeras veinticuatro horas; la votación no puede celebrarse antes de los tres días",
+      "Ambos plazos son de cinco días, computados desde la presentación de la moción inicial"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 49.1 establece que las mociones alternativas pueden presentarse «dentro de los dos días siguientes a la presentación» de la moción inicial. El art. 49.2 establece que la votación no puede celebrarse «hasta que transcurran como mínimo cinco días desde su presentación». Los plazos son distintos: dos días para alternativas y cinco días mínimos para la votación."
+  },
+  {
+    p: "¿Cuál es la diferencia entre la mayoría requerida para aprobar la moción de censura (art. 49.4) y la necesaria para otorgar la cuestión de confianza (art. 51.3) en la Ley del Consell?",
+    ops: [
+      "La moción de censura requiere mayoría absoluta; la cuestión de confianza, también mayoría absoluta",
+      "La moción de censura requiere mayoría absoluta; la cuestión de confianza, mayoría simple",
+      "La moción de censura requiere mayoría de tres quintos; la cuestión de confianza, mayoría absoluta",
+      "Ambas requieren mayoría simple en primera votación y mayoría absoluta en segunda"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 49.4 exige «mayoría absoluta» para aprobar la moción de censura (instrumento de control ofensivo de la oposición). El art. 51.3 establece que la confianza se otorga con «mayoría simple» (instrumento voluntario del ejecutivo para revalidar su respaldo). La diferencia de mayorías refleja la distinta naturaleza de ambos mecanismos."
+  },
+  {
+    p: "¿Cuál es la diferencia entre la delegación legislativa por Ley de Bases (art. 55.1) y la delegación por Ley ordinaria (art. 55.2) de la Ley del Consell?",
+    ops: [
+      "La Ley de Bases se usa para refundir textos; la Ley ordinaria, para articular bases previas",
+      "La Ley de Bases se usa para formación de textos articulados; la Ley ordinaria, para refundir varios textos legales en uno solo",
+      "La Ley de Bases puede autorizar modificaciones retroactivas; la Ley ordinaria no",
+      "La Ley de Bases se aprueba por mayoría absoluta; la Ley ordinaria, por mayoría simple"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 55.1 establece la Ley de Bases para cuando la delegación tiene como objeto «la formación de textos articulados»; el art. 55.2 exige Ley ordinaria «cuando se trate de refundir varios textos legales en uno sólo». El criterio diferenciador es el tipo de labor encomendada al Consell: articular desde unas bases o refundir textos existentes."
+  },
+  {
+    p: "¿Cuál es la función específica de los servicios periféricos de las Consellerías según el artículo 74 de la Ley del Consell, en relación con un principio constitucional?",
+    ops: [
+      "Son la expresión organizativa del principio de descentralización territorial",
+      "Son la expresión organizativa del principio de desconcentración que ha de regir en la actividad de la Administración de la Generalitat",
+      "Son la expresión organizativa del principio de coordinación interadministrativa",
+      "Son la expresión organizativa del principio de subsidiariedad respecto a los entes locales"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 74 in fine establece expresamente que «los servicios periféricos serán la expresión organizativa del principio de desconcentración que ha de regir en la actividad de la Administración de la Generalitat». La desconcentración implica traslado de competencias a órganos inferiores del mismo ente, sin cambio de titularidad, acercando la Administración al ciudadano."
+  },
+  {
+    p: "Según el artículo 63.2 de la Ley del Consell, las competencias propias del Consell son delegables «en cualquier caso» en un órgano concreto. ¿Cuál es?",
+    ops: [
+      "En los Consellers individualmente considerados",
+      "En las Comisiones Delegadas del Consell",
+      "En los Secretarios autonómicos de la Consellería correspondiente",
+      "En la Comisión de Secretarios autonómicos y Subsecretarios"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 63.2 establece que «las competencias propias del Consell son delegables en cualquier caso en las Comisiones Delegadas del Consell». Esta regla especial permite que el ejecutivo colegiado traslade el ejercicio de sus competencias al órgano colegiado delegado sin restricciones adicionales."
+  },
+  {
+    p: "El artículo 45.5 de la Ley del Consell regula las comparecencias de los Secretarios autonómicos ante Les Corts. ¿En qué condiciones pueden comparecer?",
+    ops: [
+      "Solo cuando sean requeridos por la Comisión correspondiente mediante acuerdo de mayoría simple",
+      "A iniciativa propia y siempre por requerimiento de la Comisión, para informar de la materia objeto de debate y responder preguntas",
+      "Solo a petición del Conseller del que dependan, nunca por iniciativa propia",
+      "En cualquier momento y ante cualquier órgano de Les Corts que lo solicite"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 45.5 establece que «los Secretarios autonómicos podrán comparecer ante las Comisiones, a iniciativa propia y siempre por requerimiento de la Comisión, para informar de la materia objeto de debate y para responder preguntas en la forma que establezca el Reglamento de Les Corts». Nótese que solo comparecen ante Comisiones, no ante el Pleno."
+  },
+  {
+    p: "¿Qué especialidad procesal establece el artículo 69.3 de la Ley del Consell para las Consellerías con competencias en sanidad, educación y justicia?",
+    ops: [
+      "Pueden crear Organismos Autónomos específicos para gestionar dichas competencias sectoriales",
+      "Pueden crear Centros Directivos cuyos titulares ostentarán la jefatura del personal sanitario, docente o de justicia y llevarán la inspección de las unidades respectivas",
+      "Sus Subsecretarios tienen rango de Secretario autonómico a todos los efectos",
+      "Están exentas del requisito de crear una única Secretaría General Administrativa"
+    ],
+    c: 1,
+    exp: "<strong>Respuesta correcta: B.</strong> El art. 69.3 prevé que en las Consellerías con competencias sanitarias y educativas «podrán crearse reglamentariamente Centros Directivos cuyos titulares ostentarán la jefatura del Personal sanitario y docente, llevando a cabo además la inspección». Del mismo modo, en la Consellería de Justicia puede crearse un Centro Directivo con competencias sobre el personal al servicio de la Administración de Justicia."
+  }
+];
+
+/* ── LÓGICA ── */
+let orden = [], respondidas = 0, aciertos = 0, errores = 0;
+const TOTAL = BANCO.length;
+
+document.getElementById('totalPreguntas').textContent = '📋 ' + TOTAL + ' preguntas';
+document.getElementById('barraNum').textContent = '0 / ' + TOTAL;
+
+function mezclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function actualizarBarra() {
+  document.getElementById('barraFill').style.width = ((respondidas / TOTAL) * 100) + '%';
+  document.getElementById('barraNum').textContent = respondidas + ' / ' + TOTAL;
+  document.getElementById('scoreOk').textContent = '✓ ' + aciertos;
+  document.getElementById('scoreKo').textContent = '✗ ' + errores;
+}
+
+function construirPreguntas() {
+  orden = mezclar([...Array(TOTAL).keys()]);
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '';
+  const letras = ['A', 'B', 'C', 'D'];
+
+  orden.forEach((idx, pos) => {
+    const q = BANCO[idx];
+    const opsOrden = mezclar([0, 1, 2, 3]);
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'card-' + pos;
+
+    const numDiv = document.createElement('div');
+    numDiv.className = 'card-num';
+    numDiv.textContent = 'Pregunta ' + (pos + 1);
+
+    const pregDiv = document.createElement('div');
+    pregDiv.className = 'card-pregunta';
+    pregDiv.textContent = q.p;
+
+    const opcionesDiv = document.createElement('div');
+    opcionesDiv.className = 'opciones';
+
+    opsOrden.forEach((opIdx, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opcion';
+      btn.dataset.correcto = (opIdx === q.c) ? '1' : '0';
+      btn.dataset.pos = pos;
+      btn.innerHTML = '<span class="letra">' + letras[i] + '</span><span>' + q.ops[opIdx] + '</span>';
+      btn.addEventListener('click', onOpcionClick);
+      opcionesDiv.appendChild(btn);
+    });
+
+    const expDiv = document.createElement('div');
+    expDiv.className = 'explicacion';
+    expDiv.id = 'exp-' + pos;
+    expDiv.innerHTML = q.exp;
+
+    card.appendChild(numDiv);
+    card.appendChild(pregDiv);
+    card.appendChild(opcionesDiv);
+    card.appendChild(expDiv);
+    main.appendChild(card);
+  });
+
+  const res = document.createElement('div');
+  res.className = 'resultado';
+  res.id = 'resultado';
+  res.innerHTML = `
+    <div class="resultado-eyebrow">Resultado final</div>
+    <h2>Test completado</h2>
+    <div class="resultado-nota"><span id="rNota">-</span><span style="font-size:1.5rem;color:var(--texto-suave)">/10</span></div>
+    <div id="rBadge" class="calif-badge"></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="rOk" style="color:var(--verde)">-</div><div class="stat-lab">Correctas</div></div>
+      <div class="stat"><div class="stat-num" id="rKo" style="color:var(--rojo)">-</div><div class="stat-lab">Erróneas</div></div>
+      <div class="stat"><div class="stat-num" id="rPct">-</div><div class="stat-lab">% Acierto</div></div>
+    </div>
+    <p class="resultado-hint">Revisa las explicaciones en cada pregunta para reforzar los conceptos.</p>
+    <button class="btn btn-naranja" onclick="reiniciar()">🔄 Nuevo intento</button>
+  `;
+  main.appendChild(res);
+}
+
+function onOpcionClick(e) {
+  const btn = e.currentTarget;
+  const pos = parseInt(btn.dataset.pos);
+  const card = document.getElementById('card-' + pos);
+  card.querySelectorAll('.opcion').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correcto === '1') b.classList.add('correcta');
+    else if (b === btn) b.classList.add('incorrecta');
+  });
+  document.getElementById('exp-' + pos).classList.add('visible');
+  if (btn.dataset.correcto === '1') aciertos++; else errores++;
+  respondidas++;
+  actualizarBarra();
+  if (respondidas === TOTAL) mostrarResultado();
+}
+
+function mostrarResultado() {
+  const nota = ((aciertos / TOTAL) * 10).toFixed(1);
+  const pct = Math.round((aciertos / TOTAL) * 100);
+  let badge = '', color = '';
+  if (pct >= 90)      { badge = '🏆 Sobresaliente'; color = '#166534'; }
+  else if (pct >= 70) { badge = '✅ Notable';        color = '#1d4ed8'; }
+  else if (pct >= 50) { badge = '⚠️ Aprobado';      color = '#92400e'; }
+  else                { badge = '❌ Suspenso';       color = '#991b1b'; }
+  document.getElementById('rNota').textContent = nota;
+  document.getElementById('rOk').textContent = aciertos;
+  document.getElementById('rKo').textContent = errores;
+  document.getElementById('rPct').textContent = pct + '%';
+  const badgeEl = document.getElementById('rBadge');
+  badgeEl.textContent = badge;
+  badgeEl.style.cssText += `;background:${color}22;color:${color};border:1px solid ${color}44`;
+  const res = document.getElementById('resultado');
+  res.classList.add('visible');
+  setTimeout(() => res.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function reiniciar() {
+  respondidas = 0; aciertos = 0; errores = 0;
+  actualizarBarra();
+  construirPreguntas();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+construirPreguntas();
+</script>
+</body>
+</html>
